@@ -10,6 +10,9 @@
 	<body>
 		<?php
 
+		require('php/functions.php')
+
+		//Check if the user is logged in and load correct page
 		if($_SESSION['login']==true) {
 			loadGame();
 		}
@@ -17,6 +20,7 @@
 			loadHome();
 		}
 
+		//Load the website home page
 		function loadHome() {
 			require('php/header.php');
 			require('php/home.php');
@@ -24,6 +28,7 @@
 		}
 
 		?>
+		
 		<!--Javascript-->
 		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
