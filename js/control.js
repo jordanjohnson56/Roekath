@@ -3,40 +3,53 @@ $(document).ready(function(){
 	window.setInterval(function(){
 		//Split timer into array 20:00 = [0]20 [1]00
 		var timer = $('.timer').html().split(':');
+		//Split energy into array 15/20 = [0]15 [1]20
+		var energy = $('.energy').html().split('/');
+		if(energy[0]==energy[1]) {
+			timer[0] = '00';
+			timer[1] = '00';
+		}
+		//If timer is 00:00
 		if(timer[0]==0 && timer[1]==0) {
-			timer[0] = 20;
-			timer[1] = 00;
+			if(energy[0]!=energy[1]) {
+				energy[0]++;
+				if(energy[0]!=energy[1]) {
+					timer[0] = '20';
+					timer[1] = '00';
+				}
+			}
 		} else {
+			//If timer is xx:00
 			if(timer[1]==0) {
-				timer[0] = timer[0] - 1;
-				timer[1] = 59;
+				timer[0]--;
+				timer[1] = '59';
 			} else {
-				timer[1] = timer[1] - 1;
+				timer[1]--;
 				timer[1] = ('0' + timer[1]).slice(-2);
 			}
 		}
 		$('.timer').html(timer[0] + ':' + timer[1]);
+		$('.energy').html(energy[0] + '/' + energy[1]);
 	},1000);
 
 	$('.reset').click(function(){
-		$('.timer').text('20:00');
+		$('.timer').text('00:20');
 	});
 
-	/*$('.minus').click(function(){
-		var timer = $('.timer').html().split(':');
-		if(timer[0]==0 && timer[1]==0) {
-			timer[0] = 20;
-			timer[1] = 00;
-		} else {
-			if(timer[1]==0) {
-				timer[0] = timer[0] - 2;
-				timer[1] = 59;
-			} else {
-				timer[1] = timer[1] - 2;
-				timer[1] = ('0' + timer[1]).slice(-2);
-			}
+	/*$('.eminus').click(function(){
+		var energy = $('.energy').html().split('/');
+		if(energy[0]==energy[1]) {
+			$('.timer').html('20:00');
 		}
-		$('.timer').html(timer[0] + ':' + timer[1]);
+		if(energy[0]!=0) {
+			energy[0]--;
+		}
+		$('.energy').html(energy[0] + '/' + energy[1]);
 	});*/
 
+	$('.ereset').click(function(){
+		var energy = $('.energy').html().split('/');
+		energy[0] = energy[1];
+		$('.energy').html(energy[0] + '/' + energy[1]);
+	});
 });
