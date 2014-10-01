@@ -5,7 +5,6 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="js/control.js"></script>
-	<script type="text/javascript" src="js/ajax.js"></script>
 </head>
 <body lang="en">
 
@@ -22,12 +21,11 @@
 	} else {
 		loadHome();
 	}
-	//Get database connection
-	$db = mysqli_connect('localhost','root','pizza','roekath');
 
 	//Load the game
 	function loadGame() {
 		echo 'GAME';
+		//Connect to database
 		include('php/db_connect.php');
 		$query = mysqli_query($db,"SELECT * FROM user WHERE user='admin'");
 		while($i=mysqli_fetch_array($query)) {
@@ -37,7 +35,7 @@
 			$id = $i['id'];
 		}
 
-		date_default_timezone_set('America/Chicago');
+		include('php/timezone.php');
 		$currentTime = time();
 		$timestamp = strtotime($timestamp);
 		$timeDiff = $currentTime - $timestamp;
@@ -52,7 +50,12 @@
 		} else {
 			$currentEnergy = $currentEnergy + floor($timeDiff/1200);
 			$timeLeft = $energyIntervals - $timeDiff;
-			
+			$timer[0] = floor($timeLeft/60);
+			$timer[1] = $timeLeft - ($timer[0]*60);
+			while($timer[0]>20) {
+				$timer[0] -= 20;
+			}
+			$timer[1] = substr('0'.$timer[1],-2);
 		}
 
 		echo '<br><br>';
@@ -66,15 +69,16 @@
 		echo $a.'<br>';
 
 		?>
+		<div class="info" account="<?php echo $id ?>"></div>
 		<form action="php/logout.php" method="POST">
 			<button type="submit">Logout</button>
 		</form>
 		<br>
 		<button class="reset">Reset Timer</button><br>
-		<button class="eminus" account="<?php echo $id ?>">Minus Energy</button><br>
-		<button class="ereset" account="<?php echo $id ?>">Reset Energy</button><br>
+		<button class="eminus">Minus Energy</button><br>
+		<button class="ereset">Reset Energy</button><br>
 		<!-- </form> -->
-		<div class="timer"><?php echo '20:00' ?></div>
+		<div class="timer"><?php echo $timer[0].':'.$timer[1] ?></div>
 		<div class="energy"><?php echo $currentEnergy.'/'.$maxEnergy ?></div>
 		<?php
 	}

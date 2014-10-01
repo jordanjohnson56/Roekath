@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	var account = $('.info').attr('account');
 	window.setInterval(function(){
 		//Split timer into array 20:00 = [0]20 [1]00
 		var timer = $('.timer').html().split(':');
@@ -12,7 +12,20 @@ $(document).ready(function(){
 		//If timer is 00:00
 		if(timer[0]==0 && timer[1]==0) {
 			if(energy[0]!=energy[1]) {
-				energy[0]++;
+				$.ajax({
+					url: 'php/add_energy.php',
+					type: 'post',
+					data: {'account':account},
+					success: function(data,status) {
+						console.log(data);
+						energy[0]++;
+					},
+					error: function(xhr,desc,err) {
+						console.log('!ERROR!');
+						console.log(xhr);
+						console.log('Desc: '+desc+' Error: '+err);
+					}
+				});
 				if(energy[0]!=energy[1]) {
 					timer[0] = '20';
 					timer[1] = '00';
@@ -54,7 +67,7 @@ $(document).ready(function(){
 		$.ajax({
 			url: 'php/reset_energy.php',
 			type: 'post',
-			data: {'account':$('.ereset').attr('account')},
+			data: {'account':account},
 			success: function(data,status) {
 				console.log('!OK!');
 			},
@@ -62,6 +75,31 @@ $(document).ready(function(){
 				console.log('!ERROR!');
 				console.log(xhr);
 				console.log('Desc: '+desc+' Error: '+err);
+			}
+		});
+	});
+	$('.eminus').on('click', function(e){
+		e.preventDefault();
+		$.ajax({
+			url: 'php/use_energy.php',
+			type: 'post',
+			data: {'action':'use','amount':'2','account':account,'timer':$('.timer').html().split(':')},
+			success: function(data,status) {
+				console.log('!OK!');
+				var energy = $('.energy').html().split('/');
+				if(energy[0]==energy[1]) {
+					$('.timer').html('20:00');
+				}
+				if(energy[0]!=0) {
+					energy[0] -= '2';
+				}
+				$('.energy').html(energy[0] + '/' + energy[1]);
+				console.log(data);
+			},
+			error: function(xhr,desc,err) {
+				console.log('!ERROR! ');
+				console.log(xhr);
+				console.log('Details: '+desc+'\nError: '+err);
 			}
 		});
 	});
