@@ -12,9 +12,4 @@ function checkLogin() {
 	}
 }
 
-function dbConnect() {
-	$sig = mysqli_connect('localhost','root','pizza','roekath');
-	return $sig;
-}
-
 ?>

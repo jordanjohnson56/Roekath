@@ -1,7 +1,7 @@
 <?php
 
 if($_POST['action']=='use') {
-	$db = mysqli_connect('localhost','root','pizza','roekath');
+	include('db_connect.php');
 	$query = mysqli_query($db,"SELECT * FROM user WHERE id='".$_POST['account']."'");
 	while($i=mysqli_fetch_array($query)) {
 		$currentEnergy = $i['current_energy'];
@@ -10,6 +10,8 @@ if($_POST['action']=='use') {
 		$currentEnergy -= $_POST['amount'];
 	}
 	$query = mysqli_query($db,"UPDATE user SET current_energy='".$currentEnergy."' WHERE id='".$_POST['account']."'");
+	$dbFormat = date('Y-M-D H:i:s',time());
+	$query = mysqli_query($db,"UPDATE user SET energy_update='".$dbFormat."' WHERE id='".$id."'");
 	if($query){echo 'ok';}
 }
 

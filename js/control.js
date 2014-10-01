@@ -51,5 +51,18 @@ $(document).ready(function(){
 		var energy = $('.energy').html().split('/');
 		energy[0] = energy[1];
 		$('.energy').html(energy[0] + '/' + energy[1]);
+		$.ajax({
+			url: 'php/reset_energy.php',
+			type: 'post',
+			data: {'account':$('.ereset').attr('account')},
+			success: function(data,status) {
+				console.log('!OK!');
+			},
+			error: function(xhr,desc,err) {
+				console.log('!ERROR!');
+				console.log(xhr);
+				console.log('Desc: '+desc+' Error: '+err);
+			}
+		});
 	});
 });

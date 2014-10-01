@@ -23,30 +23,36 @@
 		loadHome();
 	}
 	//Get database connection
-	//$db = dbConnect();
 	$db = mysqli_connect('localhost','root','pizza','roekath');
 
+	//Load the game
 	function loadGame() {
 		echo 'GAME';
-		$db = mysqli_connect('localhost','root','pizza','roekath');
+		include('php/db_connect.php');
 		$query = mysqli_query($db,"SELECT * FROM user WHERE user='admin'");
 		while($i=mysqli_fetch_array($query)) {
-			$timestamp = $i['timer'];
+			$timestamp = $i['energy_update'];
 			$maxEnergy = $i['max_energy'];
 			$currentEnergy = $i['current_energy'];
 			$id = $i['id'];
 		}
 
+		date_default_timezone_set('America/Chicago');
 		$currentTime = time();
 		$timestamp = strtotime($timestamp);
 		$timeDiff = $currentTime - $timestamp;
 		$missingEnergy = $maxEnergy - $currentEnergy;
 		$energyIntervals = $missingEnergy * 1200;
 		$a = false;
-		if($timeDiff > $energyIntervals){$a=true;}
+		if($timeDiff >= $energyIntervals){$a=true;}
 		if($a) {
 			$currentEnergy=$maxEnergy;
 			$query = mysqli_query($db,"UPDATE user SET current_energy='".$currentEnergy."' WHERE id='".$id."'");
+			$query = mysqli_query($db,"UPDATE user SET energy_update=null WHERE id='".$id."'");
+		} else {
+			$currentEnergy = $currentEnergy + floor($timeDiff/1200);
+			$timeLeft = $energyIntervals - $timeDiff;
+			
 		}
 
 		echo '<br><br>';
@@ -58,19 +64,17 @@
 		echo $missingEnergy.'<br>';
 		echo $energyIntervals.'<br>';
 		echo $a.'<br>';
-		echo '<br>';
-		
-		//TODO: Check current time, figure out if it is greater than $timer, do stuff
+
 		?>
 		<form action="php/logout.php" method="POST">
 			<button type="submit">Logout</button>
 		</form>
 		<br>
 		<button class="reset">Reset Timer</button><br>
-		<button class="eminus" account="<?php echo $id ?>$">Minus Energy</button><br>
-		<button class="ereset">Reset Energy</button><br>
+		<button class="eminus" account="<?php echo $id ?>">Minus Energy</button><br>
+		<button class="ereset" account="<?php echo $id ?>">Reset Energy</button><br>
 		<!-- </form> -->
-		<div class="timer"><?php echo '' ?></div>
+		<div class="timer"><?php echo '20:00' ?></div>
 		<div class="energy"><?php echo $currentEnergy.'/'.$maxEnergy ?></div>
 		<?php
 	}
